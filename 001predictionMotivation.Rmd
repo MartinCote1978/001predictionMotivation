@@ -48,7 +48,7 @@ trainingdata <- trainingdata[ , which(colsWithOnlyNAs == 0)]
 testdata <- testdata[ , which(colsWithOnlyNAs == 0)]
 
 # Suggestion #3
-colsToCleanUp <- c(1, 2, 3, 4, 5, 6, 7)
+colsToCleanUp <- c(1, 2, 3, 4, 5, 6, 7) # Removing any columns with timestamp, user, X, and window.
 trainingdata <- trainingdata[ , -colsToCleanUp]
 testdata <- testdata[ , -colsToCleanUp]
 ```
@@ -67,11 +67,11 @@ xvaltrainingdata <- trainingdata[-inTrain, ]
 
 Determining the best predictions model using a 'random forest' method with 5 folds.
 
-*Note:* 5 folds is used mostly to reduce overall processing time while limited gains in accuracy with higher amount; tested at 3 and 10, 5 yielded the highest out of sample error rate (see next section).
+*Note:* 5 folds is used mostly to reduce overall processing time while limited gains in accuracy with higher amount; tested at 3 and 10, 5 yielded the highest out of sample error rate (see next section).  As described in reference #2, 5-folds or 10-folds are usually effective and since in our case 5-folds got better accuracy, it was ultimately the number selected.
 
 ```{r echo=TRUE}
 ctrl = trainControl(method="cv", number=5, allowParallel=TRUE)
-modelFit <- train(classe ~ ., data=subtrainingdata, method="rf", trControl=ctrl)
+modelFit <- train(classe ~ ., data=subtrainingdata, method="rf", trControl=ctrl) # Using 'random forest'
 modelFit
 modelFit$finalModel
 ```
@@ -82,6 +82,7 @@ Since our model accuracy has ~0.9914 (final model selected was mtry = 27 - see p
 
 ```{r echo=TRUE}
 xvalpredictions <- predict(modelFit, xvaltrainingdata)
+# Percentage of correctly predicted outcome:
 sampleerror.accuracy <- sum(xvalpredictions == xvaltrainingdata$classe)/nrow(xvaltrainingdata)
 sampleerror.accuracy
 ```
@@ -98,12 +99,14 @@ predictions
 
 # References
 
-* http://groupware.les.inf.puc-rio.br/har
+1. http://groupware.les.inf.puc-rio.br/har
+2. http://scott.fortmann-roe.com/docs/MeasuringError.html
 
 
 ## Submit answers (i.e. predictions)
 
 ```{r echo=TRUE}
+# Functions from the course notes
 pml_write_files = function(x){
   n = length(x)
   for(i in 1:n){
