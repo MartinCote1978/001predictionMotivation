@@ -1,5 +1,9 @@
 ---
+<<<<<<< HEAD
 title: "Coursera Practical Machine Learning Course Project - Predicting Motivation"
+=======
+title: "Coursera Practical Machine Learning Course Project - Predicting Exercise Quality"
+>>>>>>> gh-pages
 author: "Martin Cote"
 date: "June 21, 2015"
 output: html_document
@@ -7,14 +11,22 @@ output: html_document
 
 # Synopsis
 
+<<<<<<< HEAD
 Using a particular dataset, observed within controlled conditions, trying to find the best predictors, or prediction model, to determine the quality of movement, where the data was extracted from the tracking devices (e.g. Jawbone, FitBit, etc.).
+=======
+Using a particular dataset (see references), observed within controlled conditions, trying to find the best predictors, or prediction model, to determine the quality of movement (or "predict the manner in which they did the exercise"), where the data was extracted from the specific tracking devices (e.g. Jawbone, FitBit, etc.).
+>>>>>>> gh-pages
 
 # Pre-Processing
 
 ```{r echo=FALSE, message=FALSE}
 # Loading libraries
 library(lattice) # Required by 'caret'
+<<<<<<< HEAD
 library(ggplot2)
+=======
+library(ggplot2) # Required by 'caret'
+>>>>>>> gh-pages
 library(caret)
 
 # Setting the pseudo-random numbers
@@ -28,7 +40,11 @@ registerDoParallel(cl)
 
 # Data Splitting
 
+<<<<<<< HEAD
 Since the data is already divided up, the data splitting step is replaced with simply loading the data as appropriate.
+=======
+Since the data is already divided up, the data splitting step is replaced with simply loading the data as appropriate, ensuring that both "NA" and "" (empty cells) are considered NAs.
+>>>>>>> gh-pages
 
 ```{r echo=TRUE}
 # Loading the data
@@ -43,19 +59,32 @@ Cleaning the data following suggestions from the Coursera Course Project Tips at
 
 ```{r echo=TRUE}
 # Suggestion #2
+<<<<<<< HEAD
 colsWithOnlyNAs <- apply(trainingdata,2,function(x) {sum(is.na(x))}) 
 trainingdata <- trainingdata[ , which(colsWithOnlyNAs == 0)]
 testdata <- testdata[ , which(colsWithOnlyNAs == 0)]
 
 # Suggestion #3
 colsToCleanUp <- c(1, 2, 3, 4, 5, 6, 7)
+=======
+colsWithNoNAs <- apply(trainingdata,2,function(x) {sum(is.na(x))}) 
+trainingdata <- trainingdata[ , which(colsWithNoNAs == 0)]
+testdata <- testdata[ , which(colsWithNoNAs == 0)]
+
+# Suggestion #3
+colsToCleanUp <- c(1, 2, 3, 4, 5, 6, 7) # Removing any columns with timestamp, user, X, and window.
+>>>>>>> gh-pages
 trainingdata <- trainingdata[ , -colsToCleanUp]
 testdata <- testdata[ , -colsToCleanUp]
 ```
 
 # Create a sub-dataset for the cross-validation
 
+<<<<<<< HEAD
 Using a cross-validation technique in order to improve the accuracy of our model.
+=======
+Using a cross-validation technique in order to improve the accuracy of the model.
+>>>>>>> gh-pages
 
 ```{r echo=TRUE}
 inTrain <- createDataPartition(y = trainingdata$classe, p=0.7,list=FALSE)
@@ -65,6 +94,7 @@ xvaltrainingdata <- trainingdata[-inTrain, ]
 
 # Training the model
 
+<<<<<<< HEAD
 Determining the best predictions model using a 'random forest' method with 3 folds.
 
 **Note:** 5 folds is used mostly to reduce overall processing time with limited gains in accuracy.
@@ -72,15 +102,35 @@ Determining the best predictions model using a 'random forest' method with 3 fol
 ```{r echo=TRUE}
 ctrl = trainControl(method="cv", number=5, allowParallel=TRUE)
 modelFit <- train(classe ~ ., data=subtrainingdata, method="rf", trControl=ctrl)
+=======
+Determining the best predictions model using a 'random forest' method with 5 folds.
+
+*Note:* 5 folds is used mostly to reduce overall processing time while limited gains in accuracy with higher amount; tested at 3 and 10, 5 yielded the highest out of sample error rate (see next section).  As described in reference #2, 5-folds or 10-folds are usually effective and since in our case 5-folds got better accuracy, it was ultimately the number selected.
+
+```{r echo=TRUE}
+ctrl = trainControl(method="cv", number=5, allowParallel=TRUE)
+modelFit <- train(classe ~ ., data=subtrainingdata, method="rf", trControl=ctrl) # Using 'random forest'
+modelFit
+>>>>>>> gh-pages
 modelFit$finalModel
 ```
 
 ## Estimating the Out of Sample Error with the cross-validation sub-dataset.
 
+<<<<<<< HEAD
 ```{r echo=TRUE}
 xvalpredictions <- predict(modelFit, xvaltrainingdata)
 sampleerror <- sum(xvalpredictions == xvaltrainingdata$classe)/nrow(xvaltrainingdata)
 sampleerror
+=======
+Since our model accuracy has ~0.9914 (final model selected was mtry = 27 - see previous section), we expect our out of sample error rate to be higher, which is confirmed below with the value obtained.
+
+```{r echo=TRUE}
+xvalpredictions <- predict(modelFit, xvaltrainingdata)
+# Percentage of correctly predicted outcome:
+sampleerror.accuracy <- sum(xvalpredictions == xvaltrainingdata$classe)/nrow(xvaltrainingdata)
+sampleerror.accuracy
+>>>>>>> gh-pages
 ```
 
 # Predictions and Model comparison
@@ -88,8 +138,34 @@ sampleerror
 ```{r echo=TRUE}
 predictions <- predict(modelFit,newdata=testdata)
 predictions
+<<<<<<< HEAD
 #confusionMatrix(predictions,testdata$classe)
 
 # The stopCluster is necessary to terminate the extra processes
 #stopCluster(cl)
+=======
+
+# The stopCluster is necessary to terminate the extra processes
+#stopCluster(cl) # Although suggested to be used, it crahsed RStudio on my Mac.
+```
+
+# References
+
+1. http://groupware.les.inf.puc-rio.br/har
+2. http://scott.fortmann-roe.com/docs/MeasuringError.html
+
+
+## Submit answers (i.e. predictions)
+
+```{r echo=TRUE}
+# Functions from the course notes
+pml_write_files = function(x){
+  n = length(x)
+  for(i in 1:n){
+    filename = paste0("problem_id_",i,".txt")
+    write.table(x[i],file=filename,quote=FALSE,row.names=FALSE,col.names=FALSE)
+  }
+}
+pml_write_files(as.character(predictions) )
+>>>>>>> gh-pages
 ```
