@@ -86,9 +86,9 @@ testdata &lt;- read.csv(file=&quot;pml-testing.csv&quot;, na.strings=c(&quot;NA&
 <h1>Data cleaning &amp; Pre-Processing</h1>
 <p>Cleaning the data following suggestions from the Coursera Course Project Tips at: <a href="https://class.coursera.org/predmachlearn-015/forum/thread?thread_id=41" class="uri">https://class.coursera.org/predmachlearn-015/forum/thread?thread_id=41</a></p>
 <pre class="r"><code># Suggestion #2
-colsWithOnlyNAs &lt;- apply(trainingdata,2,function(x) {sum(is.na(x))}) 
-trainingdata &lt;- trainingdata[ , which(colsWithOnlyNAs == 0)]
-testdata &lt;- testdata[ , which(colsWithOnlyNAs == 0)]
+colsWithNoNAs &lt;- apply(trainingdata,2,function(x) {sum(is.na(x))}) 
+trainingdata &lt;- trainingdata[ , which(colsWithNoNAs == 0)]
+testdata &lt;- testdata[ , which(colsWithNoNAs == 0)]
 
 # Suggestion #3
 colsToCleanUp &lt;- c(1, 2, 3, 4, 5, 6, 7) # Removing any columns with timestamp, user, X, and window.
@@ -125,10 +125,10 @@ modelFit &lt;- train(classe ~ ., data=subtrainingdata, method=&quot;rf&quot;, tr
 ## 
 ## Resampling results across tuning parameters:
 ## 
-##   mtry  Accuracy   Kappa      Accuracy SD   Kappa SD   
-##    2    0.9918469  0.9896856  0.0015984847  0.002022911
-##   27    0.9926476  0.9906995  0.0009761685  0.001234962
-##   52    0.9872609  0.9838858  0.0022418190  0.002834260
+##   mtry  Accuracy   Kappa      Accuracy SD  Kappa SD    
+##    2    0.9914102  0.9891334  0.001638764  0.0020735559
+##   27    0.9929388  0.9910679  0.000661148  0.0008358795
+##   52    0.9867514  0.9832415  0.002894054  0.0036595202
 ## 
 ## Accuracy was used to select the optimal model using  the largest value.
 ## The final value used for the model was mtry = 27.</code></pre>
