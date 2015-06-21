@@ -1,0 +1,95 @@
+---
+title: "Coursera Practical Machine Learning Course Project - Predicting Motivation"
+author: "Martin Cote"
+date: "June 21, 2015"
+output: html_document
+---
+
+# Synopsis
+
+Using a particular dataset, observed within controlled conditions, trying to find the best predictors, or prediction model, to determine the quality of movement, where the data was extracted from the tracking devices (e.g. Jawbone, FitBit, etc.).
+
+# Pre-Processing
+
+```{r echo=FALSE, message=FALSE}
+# Loading libraries
+library(lattice) # Required by 'caret'
+library(ggplot2)
+library(caret)
+
+# Setting the pseudo-random numbers
+set.seed(1206)
+
+# enable multi-core processing
+library(doParallel)
+cl <- makeCluster(detectCores())
+registerDoParallel(cl)
+```
+
+# Data Splitting
+
+Since the data is already divided up, the data splitting step is replaced with simply loading the data as appropriate.
+
+```{r echo=TRUE}
+# Loading the data
+trainingdata <- read.csv(file="pml-training.csv", na.strings=c("NA",""), header=TRUE)
+testdata <- read.csv(file="pml-testing.csv", na.strings=c("NA",""), header=TRUE)
+
+```
+
+# Data cleaning & Pre-Processing
+
+Cleaning the data following suggestions from the Coursera Course Project Tips at: https://class.coursera.org/predmachlearn-015/forum/thread?thread_id=41
+
+```{r echo=TRUE}
+# Suggestion #2
+colsWithOnlyNAs <- apply(trainingdata,2,function(x) {sum(is.na(x))}) 
+trainingdata <- trainingdata[ , which(colsWithOnlyNAs == 0)]
+testdata <- testdata[ , which(colsWithOnlyNAs == 0)]
+
+# Suggestion #3
+colsToCleanUp <- c(1, 2, 3, 4, 5, 6, 7)
+trainingdata <- trainingdata[ , -colsToCleanUp]
+testdata <- testdata[ , -colsToCleanUp]
+```
+
+# Create a sub-dataset for the cross-validation
+
+Using a cross-validation technique in order to improve the accuracy of our model.
+
+```{r echo=TRUE}
+inTrain <- createDataPartition(y = trainingdata$classe, p=0.7,list=FALSE)
+subtrainingdata <- trainingdata[inTrain, ]
+xvaltrainingdata <- trainingdata[-inTrain, ]
+```
+
+# Training the model
+
+Determining the best predictions model using a 'random forest' method with 3 folds.
+
+**Note:** 5 folds is used mostly to reduce overall processing time with limited gains in accuracy.
+
+```{r echo=TRUE}
+ctrl = trainControl(method="cv", number=5, allowParallel=TRUE)
+modelFit <- train(classe ~ ., data=subtrainingdata, method="rf", trControl=ctrl)
+modelFit$finalModel
+```
+
+## Estimating the Out of Sample Error with the cross-validation sub-dataset.
+
+```{r echo=TRUE}
+xvalpredictions <- predict(modelFit, xvaltrainingdata)
+sampleerror <- sum(xvalpredictions == xvaltrainingdata$classe)/nrow(xvaltrainingdata)
+sampleerror
+```
+
+# Predictions and Model comparison
+
+```{r echo=TRUE}
+predictions <- predict(modelFit,newdata=testdata)
+predictions
+#confusionMatrix(predictions,testdata$classe)
+
+# The stopCluster is necessary to terminate the extra processes
+#stopCluster(cl)
+```
