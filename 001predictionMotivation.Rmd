@@ -82,6 +82,7 @@ Since our model accuracy has ~0.9914 (final model selected was mtry = 27 - see p
 
 ```{r echo=TRUE}
 xvalpredictions <- predict(modelFit, xvaltrainingdata)
+confusionMatrix(xvalpredictions, xvaltrainingdata$classe)
 # Percentage of correctly predicted outcome:
 sampleerror.accuracy <- sum(xvalpredictions == xvaltrainingdata$classe)/nrow(xvaltrainingdata)
 sampleerror.accuracy
@@ -94,7 +95,7 @@ predictions <- predict(modelFit,newdata=testdata)
 predictions
 
 # The stopCluster is necessary to terminate the extra processes
-#stopCluster(cl) # Although suggested to be used, it crahsed RStudio on my Mac.
+#stopCluster(cl) # Although suggested to be used, it crashed RStudio on my Mac.
 ```
 
 # References
