@@ -106,12 +106,9 @@ xvaltrainingdata &lt;- trainingdata[-inTrain, ]</code></pre>
 <h1>Training the model</h1>
 <p>Determining the best predictions model using a ‘random forest’ method with 5 folds.</p>
 <p><em>Note:</em> 5 folds is used mostly to reduce overall processing time while limited gains in accuracy with higher amount; tested at 3 and 10, 5 yielded the highest out of sample error rate (see next section). As described in reference #2, 5-folds or 10-folds are usually effective and since in our case 5-folds got better accuracy, it was ultimately the number selected.</p>
-<pre class="r"><code>ctrl = trainControl(method=&quot;cv&quot;, number=5, allowParallel=TRUE)
-modelFit &lt;- train(classe ~ ., data=subtrainingdata, method=&quot;rf&quot;, trControl=ctrl) # Using 'random forest'</code></pre>
-<pre><code>## Loading required package: randomForest
-## randomForest 4.6-10
-## Type rfNews() to see new features/changes/bug fixes.</code></pre>
-<pre class="r"><code>modelFit</code></pre>
+<pre class="r"><code>ctrl &lt;- trainControl(method=&quot;cv&quot;, number=5, allowParallel=TRUE)
+modelFit &lt;- train(classe ~ ., data=subtrainingdata, method=&quot;rf&quot;, trControl=ctrl) # Using 'random forest'
+modelFit</code></pre>
 <pre><code>## Random Forest 
 ## 
 ## 13737 samples
@@ -125,10 +122,10 @@ modelFit &lt;- train(classe ~ ., data=subtrainingdata, method=&quot;rf&quot;, tr
 ## 
 ## Resampling results across tuning parameters:
 ## 
-##   mtry  Accuracy   Kappa      Accuracy SD   Kappa SD   
-##    2    0.9915557  0.9893173  0.0009759639  0.001235005
-##   27    0.9928661  0.9909757  0.0009825084  0.001242765
-##   52    0.9864600  0.9828728  0.0020155981  0.002548311
+##   mtry  Accuracy   Kappa      Accuracy SD   Kappa SD    
+##    2    0.9917014  0.9895022  0.0015085531  0.0019086371
+##   27    0.9927204  0.9907916  0.0005751494  0.0007272435
+##   52    0.9866057  0.9830573  0.0026406753  0.0033395250
 ## 
 ## Accuracy was used to select the optimal model using  the largest value.
 ## The final value used for the model was mtry = 27.</code></pre>

@@ -15,6 +15,8 @@ Using a particular dataset (see references), observed within controlled conditio
 # Loading libraries
 library(lattice) # Required by 'caret'
 library(ggplot2) # Required by 'caret'
+library(randomForest)
+library(e1071)
 library(caret)
 
 # Setting the pseudo-random numbers
@@ -70,7 +72,7 @@ Determining the best predictions model using a 'random forest' method with 5 fol
 *Note:* 5 folds is used mostly to reduce overall processing time while limited gains in accuracy with higher amount; tested at 3 and 10, 5 yielded the highest out of sample error rate (see next section).  As described in reference #2, 5-folds or 10-folds are usually effective and since in our case 5-folds got better accuracy, it was ultimately the number selected.
 
 ```{r echo=TRUE}
-ctrl = trainControl(method="cv", number=5, allowParallel=TRUE)
+ctrl <- trainControl(method="cv", number=5, allowParallel=TRUE)
 modelFit <- train(classe ~ ., data=subtrainingdata, method="rf", trControl=ctrl) # Using 'random forest'
 modelFit
 modelFit$finalModel
