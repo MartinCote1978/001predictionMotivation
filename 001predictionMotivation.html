@@ -125,10 +125,10 @@ modelFit &lt;- train(classe ~ ., data=subtrainingdata, method=&quot;rf&quot;, tr
 ## 
 ## Resampling results across tuning parameters:
 ## 
-##   mtry  Accuracy   Kappa      Accuracy SD  Kappa SD    
-##    2    0.9914102  0.9891334  0.001638764  0.0020735559
-##   27    0.9929388  0.9910679  0.000661148  0.0008358795
-##   52    0.9867514  0.9832415  0.002894054  0.0036595202
+##   mtry  Accuracy   Kappa      Accuracy SD  Kappa SD   
+##    2    0.9913374  0.9890411  0.001394939  0.001765259
+##   27    0.9928660  0.9909757  0.000837724  0.001059516
+##   52    0.9867512  0.9832409  0.002541462  0.003213870
 ## 
 ## Accuracy was used to select the optimal model using  the largest value.
 ## The final value used for the model was mtry = 27.</code></pre>
@@ -152,7 +152,39 @@ modelFit &lt;- train(classe ~ ., data=subtrainingdata, method=&quot;rf&quot;, tr
 <h2>Estimating the Out of Sample Error with the cross-validation sub-dataset.</h2>
 <p>Since our model accuracy has ~0.9914 (final model selected was mtry = 27 - see previous section), we expect our out of sample error rate to be higher, which is confirmed below with the value obtained.</p>
 <pre class="r"><code>xvalpredictions &lt;- predict(modelFit, xvaltrainingdata)
-# Percentage of correctly predicted outcome:
+confusionMatrix(xvalpredictions, xvaltrainingdata$classe)</code></pre>
+<pre><code>## Confusion Matrix and Statistics
+## 
+##           Reference
+## Prediction    A    B    C    D    E
+##          A 1672    7    0    0    0
+##          B    0 1130    2    0    0
+##          C    1    2 1021   13    1
+##          D    0    0    3  951    5
+##          E    1    0    0    0 1076
+## 
+## Overall Statistics
+##                                           
+##                Accuracy : 0.9941          
+##                  95% CI : (0.9917, 0.9959)
+##     No Information Rate : 0.2845          
+##     P-Value [Acc &gt; NIR] : &lt; 2.2e-16       
+##                                           
+##                   Kappa : 0.9925          
+##  Mcnemar's Test P-Value : NA              
+## 
+## Statistics by Class:
+## 
+##                      Class: A Class: B Class: C Class: D Class: E
+## Sensitivity            0.9988   0.9921   0.9951   0.9865   0.9945
+## Specificity            0.9983   0.9996   0.9965   0.9984   0.9998
+## Pos Pred Value         0.9958   0.9982   0.9836   0.9917   0.9991
+## Neg Pred Value         0.9995   0.9981   0.9990   0.9974   0.9988
+## Prevalence             0.2845   0.1935   0.1743   0.1638   0.1839
+## Detection Rate         0.2841   0.1920   0.1735   0.1616   0.1828
+## Detection Prevalence   0.2853   0.1924   0.1764   0.1630   0.1830
+## Balanced Accuracy      0.9986   0.9958   0.9958   0.9924   0.9971</code></pre>
+<pre class="r"><code># Percentage of correctly predicted outcome:
 sampleerror.accuracy &lt;- sum(xvalpredictions == xvaltrainingdata$classe)/nrow(xvaltrainingdata)
 sampleerror.accuracy</code></pre>
 <pre><code>## [1] 0.9940527</code></pre>
@@ -165,7 +197,7 @@ predictions</code></pre>
 <pre><code>##  [1] B A B A A E D B A A B C B A E E A B B B
 ## Levels: A B C D E</code></pre>
 <pre class="r"><code># The stopCluster is necessary to terminate the extra processes
-#stopCluster(cl) # Although suggested to be used, it crahsed RStudio on my Mac.</code></pre>
+#stopCluster(cl) # Although suggested to be used, it crashed RStudio on my Mac.</code></pre>
 </div>
 <div id="references" class="section level1">
 <h1>References</h1>
